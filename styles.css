@@ -1,0 +1,285 @@
+:root {
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #0e1116;
+  color: #e9eef8;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 16px 40px;
+}
+
+.header h1 {
+  margin: 0 0 6px;
+  font-size: 28px;
+}
+
+.header p {
+  margin: 0 0 16px;
+  color: #a9b5cb;
+}
+
+.dropzone {
+  border: 2px dashed #3a4b68;
+  border-radius: 12px;
+  padding: 28px;
+  text-align: center;
+  background: #131923;
+  position: relative;
+}
+
+.dropzone input[type="file"] {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.dropzone.dragover {
+  border-color: #6f8cff;
+  background: #162039;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.topn-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.topn-inline input {
+  width: 72px;
+  background: #121925;
+  border: 1px solid #2f3b52;
+  color: #e9eef8;
+  border-radius: 8px;
+  padding: 6px 8px;
+}
+
+.manual {
+  margin-top: 12px;
+  border: 1px solid #2f3b52;
+  border-radius: 12px;
+  padding: 10px;
+  background: #121925;
+}
+
+.manual h3 {
+  margin: 0 0 10px;
+  font-size: 14px;
+}
+
+.manual-row {
+  display: flex;
+  gap: 8px;
+}
+
+.manual input,
+.manual textarea {
+  width: 100%;
+  background: #0f1520;
+  border: 1px solid #2f3b52;
+  color: #e9eef8;
+  border-radius: 8px;
+  padding: 8px;
+}
+
+.manual textarea {
+  margin-top: 8px;
+  min-height: 96px;
+  resize: vertical;
+}
+
+button {
+  border: 1px solid #38455c;
+  background: #1a2333;
+  color: #ecf2ff;
+  padding: 8px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.stats {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(110px, 1fr));
+  gap: 8px;
+}
+
+.stat {
+  background: #121925;
+  border: 1px solid #2f3b52;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.stat .label {
+  font-size: 11px;
+  color: #97a7c6;
+}
+
+.stat .value {
+  font-size: 16px;
+  margin-top: 5px;
+}
+
+.filters {
+  margin-top: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.filters label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.filters select,
+.filters input {
+  background: #121925;
+  border: 1px solid #2f3b52;
+  color: #e9eef8;
+  padding: 6px 8px;
+  border-radius: 8px;
+}
+
+.workflow {
+  margin-top: 16px;
+  border: 1px solid #2f3b52;
+  border-radius: 12px;
+  background: #121925;
+  padding: 12px;
+}
+
+.workflow h3 {
+  margin: 0 0 10px;
+  font-size: 14px;
+}
+
+.workflow-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.muted {
+  color: #9fb0d0;
+  font-size: 12px;
+}
+
+.profile-box {
+  margin-bottom: 10px;
+}
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(200px, 1fr));
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.profile-box input,
+.profile-box textarea {
+  width: 100%;
+  background: #0f1520;
+  border: 1px solid #2f3b52;
+  color: #e9eef8;
+  border-radius: 8px;
+  padding: 8px;
+}
+
+.profile-box textarea {
+  min-height: 70px;
+  resize: vertical;
+}
+
+.table-wrap {
+  margin-top: 16px;
+  overflow-x: auto;
+  border: 1px solid #2f3b52;
+  border-radius: 12px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+th,
+td {
+  border-bottom: 1px solid #253047;
+  padding: 8px;
+  vertical-align: top;
+}
+
+th {
+  text-align: left;
+  color: #a9b5cb;
+  background: #0f1520;
+  position: sticky;
+  top: 0;
+}
+
+td a {
+  color: #8eb1ff;
+}
+
+.row-select {
+  width: 18px;
+  height: 18px;
+}
+
+.pill {
+  display: inline-block;
+  padding: 2px 7px;
+  border-radius: 999px;
+  border: 1px solid #3b4b69;
+  font-size: 11px;
+}
+
+.pill.shoot_now {
+  border-color: #2f8f5b;
+  color: #80e1aa;
+}
+
+.pill.adapt_later {
+  border-color: #8465d5;
+  color: #b79dff;
+}
+
+.pill.archive {
+  border-color: #7b3b46;
+  color: #f3a5b1;
+}
+
+.hidden {
+  display: none;
+}

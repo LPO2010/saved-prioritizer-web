@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Saved Prioritizer</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="container">
+      <header class="header">
+        <h1>Saved Prioritizer</h1>
+        <p>Загрузи CSV из extension и получи приоритизацию по реальным метрикам + свежести.</p>
+      </header>
+
+      <section id="dropzone" class="dropzone">
+        <input id="fileInput" type="file" accept=".csv,text/csv" />
+        <p>Перетащи CSV сюда или нажми для выбора файла</p>
+      </section>
+
+      <section class="manual">
+        <h3>Если доступ к файлам заблокирован</h3>
+        <div class="manual-row">
+          <input
+            id="urlInput"
+            type="text"
+            value="/web/input.csv"
+            placeholder="/web/input.csv"
+          />
+          <button id="loadUrlBtn">Загрузить по URL</button>
+        </div>
+        <textarea
+          id="csvText"
+          placeholder="Или вставь CSV сюда целиком и нажми «Обработать текст»"
+        ></textarea>
+        <div class="manual-row">
+          <button id="parseTextBtn">Обработать текст</button>
+        </div>
+      </section>
+
+      <section class="actions">
+        <button id="downloadBtn" disabled>Скачать итоговый CSV</button>
+        <button id="copyTopBtn" disabled>Скопировать топ-20 ссылок</button>
+        <button id="queueBtn" disabled>Скачать очередь транскрибации</button>
+        <label class="topn-inline">
+          TopN
+          <input id="topNInput" type="number" min="1" value="30" />
+        </label>
+      </section>
+
+      <section id="stats" class="stats hidden"></section>
+
+      <section id="filters" class="filters hidden">
+        <label>
+          Decision:
+          <select id="decisionFilter">
+            <option value="all">all</option>
+            <option value="shoot_now">shoot_now</option>
+            <option value="adapt_later">adapt_later</option>
+            <option value="archive">archive</option>
+          </select>
+        </label>
+        <label>
+          Min score:
+          <input id="minScoreFilter" type="number" value="0" step="0.1" />
+        </label>
+        <label>
+          <input id="reelsOnlyFilter" type="checkbox" />
+          Только reels
+        </label>
+      </section>
+
+      <section id="workflow" class="workflow hidden">
+        <h3>Воронка транскрибации</h3>
+        <div class="workflow-row">
+          <button id="selectVisibleReelsBtn" disabled>Выбрать видимые reels</button>
+          <button id="clearSelectionBtn" disabled>Очистить выбор</button>
+          <span class="muted">Выбрано reels: <strong id="selectedCount">0</strong></span>
+        </div>
+
+        <div class="workflow-row">
+          <label><input type="radio" name="workflowMode" value="save_text" checked /> Сохранить текст</label>
+          <label><input type="radio" name="workflowMode" value="adapt" /> Адаптировать под меня</label>
+        </div>
+
+        <div id="profileBox" class="profile-box hidden">
+          <div class="profile-grid">
+            <input id="creatorNiche" type="text" placeholder="Ниша (например: бьюти / психология / UGC)" />
+            <input id="targetAudience" type="text" placeholder="ЦА (кто твой зритель)" />
+            <input id="contentTone" type="text" placeholder="Тон (дружелюбный, дерзкий, экспертный...)" />
+            <input id="contentGoal" type="text" placeholder="Цель (лиды, охваты, продажи, подписки)" />
+          </div>
+          <textarea id="creatorNotes" placeholder="Доп. контекст: оффер, ограничения, табу, формат ролика"></textarea>
+        </div>
+
+        <div class="workflow-row">
+          <button id="exportWorkflowBtn" disabled>Скачать выбранное в воронку</button>
+        </div>
+      </section>
+
+      <section id="tableWrap" class="table-wrap hidden"></section>
+    </main>
+
+    <script src="./main.js"></script>
+  </body>
+</html>
