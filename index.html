@@ -41,11 +41,6 @@
       <section class="actions">
         <button id="downloadBtn" disabled>Скачать итоговый CSV</button>
         <button id="copyTopBtn" disabled>Скопировать топ-20 ссылок</button>
-        <button id="queueBtn" disabled>Скачать очередь транскрибации</button>
-        <label class="topn-inline">
-          TopN
-          <input id="topNInput" type="number" min="1" value="30" />
-        </label>
       </section>
 
       <section id="stats" class="stats hidden"></section>
@@ -70,32 +65,12 @@
         </label>
       </section>
 
-      <section id="workflow" class="workflow hidden">
-        <h3>Воронка транскрибации</h3>
-        <div class="workflow-row">
-          <button id="selectVisibleReelsBtn" disabled>Выбрать видимые reels</button>
-          <button id="clearSelectionBtn" disabled>Очистить выбор</button>
-          <span class="muted">Выбрано reels: <strong id="selectedCount">0</strong></span>
-        </div>
-
-        <div class="workflow-row">
-          <label><input type="radio" name="workflowMode" value="save_text" checked /> Сохранить текст</label>
-          <label><input type="radio" name="workflowMode" value="adapt" /> Адаптировать под меня</label>
-        </div>
-
-        <div id="profileBox" class="profile-box hidden">
-          <div class="profile-grid">
-            <input id="creatorNiche" type="text" placeholder="Ниша (например: бьюти / психология / UGC)" />
-            <input id="targetAudience" type="text" placeholder="ЦА (кто твой зритель)" />
-            <input id="contentTone" type="text" placeholder="Тон (дружелюбный, дерзкий, экспертный...)" />
-            <input id="contentGoal" type="text" placeholder="Цель (лиды, охваты, продажи, подписки)" />
-          </div>
-          <textarea id="creatorNotes" placeholder="Доп. контекст: оффер, ограничения, табу, формат ролика"></textarea>
-        </div>
-
-        <div class="workflow-row">
-          <button id="exportWorkflowBtn" disabled>Скачать выбранное в воронку</button>
-        </div>
+      <section class="workflow">
+        <h3>Премиум продукт</h3>
+        <p class="muted">
+          Авто-воронка транскрибации и адаптация сценариев сейчас доступны только в premium-версии.
+          Если хочешь доступ — напиши мне.
+        </p>
       </section>
 
       <section id="tableWrap" class="table-wrap hidden"></section>

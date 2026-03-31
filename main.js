@@ -1,9 +1,7 @@
 const state = {
   rawRows: [],
   scoredRows: [],
-  filteredRows: [],
-  selectedKeys: new Set(),
-  workflowMode: "save_text"
+  filteredRows: []
 };
 
 const els = {
@@ -20,21 +18,7 @@ const els = {
   minScoreFilter: document.getElementById("minScoreFilter"),
   reelsOnlyFilter: document.getElementById("reelsOnlyFilter"),
   downloadBtn: document.getElementById("downloadBtn"),
-  copyTopBtn: document.getElementById("copyTopBtn"),
-  queueBtn: document.getElementById("queueBtn"),
-  topNInput: document.getElementById("topNInput"),
-  workflow: document.getElementById("workflow"),
-  selectVisibleReelsBtn: document.getElementById("selectVisibleReelsBtn"),
-  clearSelectionBtn: document.getElementById("clearSelectionBtn"),
-  selectedCount: document.getElementById("selectedCount"),
-  profileBox: document.getElementById("profileBox"),
-  creatorNiche: document.getElementById("creatorNiche"),
-  targetAudience: document.getElementById("targetAudience"),
-  contentTone: document.getElementById("contentTone"),
-  contentGoal: document.getElementById("contentGoal"),
-  creatorNotes: document.getElementById("creatorNotes"),
-  exportWorkflowBtn: document.getElementById("exportWorkflowBtn"),
-  workflowModeInputs: Array.from(document.querySelectorAll('input[name="workflowMode"]'))
+  copyTopBtn: document.getElementById("copyTopBtn")
 };
 
 function parseCsv(text) {
@@ -286,34 +270,9 @@ function escapeHtml(value) {
     .replaceAll('"', "&quot;");
 }
 
-function getRowKey(row) {
-  return row.shortcode || row.post_url || `${row.item_type || "item"}_${row.total_score || ""}`;
-}
-
 function isReel(row) {
   const type = String(row.item_type || "").toLowerCase();
   return type === "reel" || String(row.post_url || "").includes("/reel/");
-}
-
-function getSelectedRows() {
-  return sortRows(state.scoredRows.filter((row) => state.selectedKeys.has(getRowKey(row))));
-}
-
-function getWorkflowProfile() {
-  return {
-    creator_niche: (els.creatorNiche.value || "").trim(),
-    target_audience: (els.targetAudience.value || "").trim(),
-    content_tone: (els.contentTone.value || "").trim(),
-    content_goal: (els.contentGoal.value || "").trim(),
-    creator_notes: (els.creatorNotes.value || "").trim()
-  };
-}
-
-function updateSelectionUi() {
-  const selectedRows = getSelectedRows().filter(isReel);
-  els.selectedCount.textContent = String(selectedRows.length);
-  els.clearSelectionBtn.disabled = selectedRows.length === 0;
-  els.exportWorkflowBtn.disabled = selectedRows.length === 0;
 }
 
 function renderTable(rows) {
@@ -321,16 +280,9 @@ function renderTable(rows) {
   const limited = rows.slice(0, 500);
   const htmlRows = limited
     .map((r) => {
-      const key = getRowKey(r);
-      const reel = isReel(r);
-      const checked = state.selectedKeys.has(key) ? "checked" : "";
-      const selectCell = reel
-        ? `<input class="row-select" type="checkbox" data-key="${escapeHtml(key)}" ${checked} />`
-        : "";
       const link = r.post_url ? `<a href="${escapeHtml(r.post_url)}" target="_blank">open</a>` : "";
       return `
         <tr>
-          <td>${selectCell}</td>
           <td><span class="pill ${r.decision}">${r.decision}</span></td>
           <td>${r.total_score}</td>
           <td>${escapeHtml(r.item_type || "")}</td>
@@ -352,7 +304,6 @@ function renderTable(rows) {
     <table>
       <thead>
         <tr>
-          <th>pick</th>
           <th>decision</th>
           <th>total_score</th>
           <th>type</th>
@@ -386,7 +337,6 @@ function applyFilters() {
 
   renderStats(state.filteredRows);
   renderTable(state.filteredRows);
-  updateSelectionUi();
 }
 
 function toCsv(rows) {
@@ -417,132 +367,6 @@ function downloadCsv(rows) {
   a.remove();
 }
 
-function buildTranscriptionQueue(rows, topN) {
-  return rows
-    .filter((r) => r.decision === "shoot_now" || r.decision === "adapt_later")
-    .slice(0, topN)
-    .map((r, idx) => ({
-      queue_rank: idx + 1,
-      shortcode: r.shortcode || "",
-      post_url: r.post_url || "",
-      item_type: r.item_type || "",
-      audio_title: r.audio_title || "",
-      caption_text: r.caption_text || "",
-      theme: r.theme || "",
-      format_type: r.format_type || "",
-      hook_type: r.hook_type || "",
-      cta_type: r.cta_type || "",
-      views_count: r.views_count || "",
-      likes_count: r.likes_count || "",
-      comments_count: r.comments_count || "",
-      like_rate_pct: r.like_rate_pct || "",
-      comment_rate_pct: r.comment_rate_pct || "",
-      total_score: r.total_score || "",
-      decision: r.decision || "",
-      stt_status: "todo",
-      adaptation_status: "todo"
-    }));
-}
-
-function downloadTranscriptionQueue(rows, topN) {
-  const queue = buildTranscriptionQueue(rows, topN);
-  if (!queue.length) {
-    alert("Нет кандидатов для транскрибации после текущих фильтров.");
-    return;
-  }
-  const csv = toCsv(queue);
-  const url = `data:text/csv;charset=utf-8,${encodeURIComponent(csv)}`;
-  const a = document.createElement("a");
-  const ts = new Date().toISOString().replace(/[:.]/g, "-");
-  a.href = url;
-  a.download = `transcription_queue_top${topN}_${ts}.csv`;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-}
-
-function buildAdaptationPrompt(row, profile) {
-  return [
-    "Задача: адаптировать идею рилса под автора.",
-    `Ниша: ${profile.creator_niche || "-"}`,
-    `ЦА: ${profile.target_audience || "-"}`,
-    `Тон: ${profile.content_tone || "-"}`,
-    `Цель: ${profile.content_goal || "-"}`,
-    `Ограничения/заметки: ${profile.creator_notes || "-"}`,
-    `Исходный caption: ${row.caption_text || "-"}`,
-    "Верни: hook (1 строка), структура 4 сцен, текст озвучки до 120 слов, CTA."
-  ].join("\n");
-}
-
-function downloadTextBundle(rows) {
-  const text = rows
-    .map(
-      (row, idx) =>
-        `#${idx + 1}\nURL: ${row.post_url || ""}\nAUDIO: ${row.audio_title || ""}\nTEXT:\n${row.caption_text || ""}\n`
-    )
-    .join("\n--------------------\n\n");
-  const url = `data:text/plain;charset=utf-8,${encodeURIComponent(text)}`;
-  const a = document.createElement("a");
-  const ts = new Date().toISOString().replace(/[:.]/g, "-");
-  a.href = url;
-  a.download = `selected_reels_text_${ts}.txt`;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-}
-
-function exportWorkflow() {
-  const mode = state.workflowMode;
-  const selectedRows = getSelectedRows().filter(isReel);
-  if (!selectedRows.length) {
-    alert("Нужно выбрать хотя бы один reels чекбоксом.");
-    return;
-  }
-
-  const profile = getWorkflowProfile();
-  if (mode === "adapt" && (!profile.creator_niche || !profile.target_audience)) {
-    alert("Для адаптации заполни минимум: ниша и ЦА.");
-    return;
-  }
-
-  const queue = selectedRows.map((row, idx) => ({
-    queue_rank: idx + 1,
-    shortcode: row.shortcode || "",
-    post_url: row.post_url || "",
-    item_type: row.item_type || "",
-    audio_title: row.audio_title || "",
-    caption_text: row.caption_text || "",
-    views_count: row.views_count || "",
-    likes_count: row.likes_count || "",
-    comments_count: row.comments_count || "",
-    total_score: row.total_score || "",
-    decision: row.decision || "",
-    workflow_mode: mode,
-    creator_niche: profile.creator_niche,
-    target_audience: profile.target_audience,
-    content_tone: profile.content_tone,
-    content_goal: profile.content_goal,
-    creator_notes: profile.creator_notes,
-    adaptation_prompt: mode === "adapt" ? buildAdaptationPrompt(row, profile) : "",
-    stt_status: "todo",
-    adaptation_status: mode === "adapt" ? "todo" : "skip"
-  }));
-
-  const csv = toCsv(queue);
-  const url = `data:text/csv;charset=utf-8,${encodeURIComponent(csv)}`;
-  const a = document.createElement("a");
-  const ts = new Date().toISOString().replace(/[:.]/g, "-");
-  a.href = url;
-  a.download = `selected_transcription_queue_${mode}_${ts}.csv`;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-
-  if (mode === "save_text") {
-    downloadTextBundle(selectedRows);
-  }
-}
-
 async function copyTopLinks(rows, topN = 20) {
   const text = rows
     .slice(0, topN)
@@ -565,15 +389,10 @@ function processCsvText(text) {
   }
   state.rawRows = objects;
   state.scoredRows = sortRows(objects.map(scoreRow));
-  state.selectedKeys = new Set();
 
   els.filters.classList.remove("hidden");
-  els.workflow.classList.remove("hidden");
   els.downloadBtn.disabled = false;
   els.copyTopBtn.disabled = false;
-  els.queueBtn.disabled = false;
-  els.selectVisibleReelsBtn.disabled = false;
-  els.clearSelectionBtn.disabled = true;
   applyFilters();
 }
 
@@ -644,46 +463,3 @@ els.copyTopBtn.addEventListener("click", async () => {
     els.copyTopBtn.textContent = "Clipboard blocked";
   }
 });
-
-els.queueBtn.addEventListener("click", () => {
-  const topN = Math.max(1, numberOrNull(els.topNInput.value) ?? 30);
-  const rows = state.filteredRows.length ? state.filteredRows : state.scoredRows;
-  downloadTranscriptionQueue(rows, topN);
-});
-
-els.tableWrap.addEventListener("change", (event) => {
-  const target = event.target;
-  if (!(target instanceof HTMLInputElement)) return;
-  if (!target.classList.contains("row-select")) return;
-  const key = target.dataset.key;
-  if (!key) return;
-  if (target.checked) {
-    state.selectedKeys.add(key);
-  } else {
-    state.selectedKeys.delete(key);
-  }
-  updateSelectionUi();
-});
-
-els.selectVisibleReelsBtn.addEventListener("click", () => {
-  for (const row of state.filteredRows) {
-    if (isReel(row)) state.selectedKeys.add(getRowKey(row));
-  }
-  renderTable(state.filteredRows);
-  updateSelectionUi();
-});
-
-els.clearSelectionBtn.addEventListener("click", () => {
-  state.selectedKeys.clear();
-  renderTable(state.filteredRows);
-  updateSelectionUi();
-});
-
-for (const input of els.workflowModeInputs) {
-  input.addEventListener("change", () => {
-    state.workflowMode = input.value;
-    els.profileBox.classList.toggle("hidden", state.workflowMode !== "adapt");
-  });
-}
-
-els.exportWorkflowBtn.addEventListener("click", exportWorkflow);
