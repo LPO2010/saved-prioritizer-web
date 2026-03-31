@@ -43,6 +43,16 @@
         <button id="copyTopBtn" disabled>Скопировать топ-20 ссылок</button>
       </section>
 
+      <section class="workflow">
+        <h3>Как считается скоринг</h3>
+        <p class="muted">
+          Итоговый <strong>total_score</strong> считается только по реальным метрикам из CSV:
+          <code>views_count</code>, <code>likes_count</code>, <code>comments_count</code> и
+          <code>published_at</code>. Новизна учитывается через коэффициент свежести
+          (<code>freshness_factor</code>): чем старше пост, тем ниже итоговый балл.
+        </p>
+      </section>
+
       <section id="stats" class="stats hidden"></section>
 
       <section id="filters" class="filters hidden">
@@ -71,7 +81,7 @@
           Авто-воронка транскрибации и адаптация сценариев сейчас доступны только в premium-версии.
           Если хочешь доступ — напиши мне.
         </p>
-        <a class="premium-btn" href="https://t.me/lpo2010" target="_blank" rel="noopener noreferrer">Получить доступ в Telegram</a>
+        <a class="premium-btn" href="https://t.me/lpo2010" target="_blank" rel="noopener noreferrer">Напиши мне</a>
       </section>
 
       <section id="tableWrap" class="table-wrap hidden"></section>
